@@ -11,9 +11,12 @@
     itemText: function(item) {
       return this.itemValue(item);
     },
+    validateWith: function(item) {
+      return true;
+    },
     freeInput: true,
     maxTags: undefined,
-    confirmKeys: [13],
+    confirmKeys: [13, 188],
     onTagExists: function(item, $tag) {
       $tag.hide().fadeIn();
     }
@@ -210,7 +213,7 @@
 
     /**
      * Assembly value by retrieving the value of each item, and set it on the
-     * element. 
+     * element.
      */
     pushVal: function() {
       var self = this,
@@ -338,7 +341,10 @@
             // When key corresponds one of the confirmKeys, add current input
             // as a new tag
             if (self.options.freeInput && $.inArray(event.which, self.options.confirmKeys) >= 0) {
-              self.add($input.val());
+              if (self.options.validateWith($input.val())) {
+                self.add($input.val());
+              }
+
               $input.val('');
               event.preventDefault();
             }
@@ -381,7 +387,7 @@
     },
 
     /**
-     * Sets focus on the tagsinput 
+     * Sets focus on the tagsinput
      */
     focus: function() {
       this.$input.focus();
@@ -446,9 +452,9 @@
   };
 
   $.fn.tagsinput.Constructor = TagsInput;
-  
+
   /**
-   * Most options support both a string or number as well as a function as 
+   * Most options support both a string or number as well as a function as
    * option value. This function makes sure that the option with the given
    * key in the given options is wrapped in a function
    */
