@@ -14,9 +14,11 @@
     validateWith: function(item) {
       return true;
     },
+    deleteConfirmation: false,
     freeInput: true,
     maxTags: undefined,
-    confirmKeys: [13, 188],
+    deleteConfirmationMessage: false,
+    confirmKeys: [13, 188, 9],
     onTagExists: function(item, $tag) {
       $tag.hide().fadeIn();
     }
@@ -356,7 +358,17 @@
 
       // Remove icon clicked
       self.$container.on('click', '[data-role=remove]', $.proxy(function(event) {
-        self.remove($(event.target).closest('.tag').data('item'));
+        var tag = $(event.target).closest('.tag').data('item');
+
+        if (self.options.deleteConfirmation) {
+          var message = (self.options.deleteConfirmationMessage || "Are you sure?").replace('{{tag}}', tag)
+
+          if (confirm(message))
+            self.remove(tag);
+        }
+        else
+          self.remove(tag);
+
       }, self));
 
       // Only add existing value as tags when using strings as tags
