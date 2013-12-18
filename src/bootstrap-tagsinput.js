@@ -161,6 +161,14 @@
       self.$element.trigger($.Event('itemRemoved',  { item: item }));
     },
 
+    removeWithConfirmation: function(item, dontPushVal) {
+      var self = this;
+      var message = (self.options.deleteConfirmationMessage || "Are you sure?").replace('{{tag}}', item)
+
+      if (confirm(message))
+        self.remove(item);
+    },
+
     /**
      * Removes all items
      */
@@ -306,7 +314,9 @@
             if (doGetCaretPosition($input[0]) === 0) {
               var prev = $inputWrapper.prev();
               if (prev) {
-                self.remove(prev.data('item'));
+
+                if (self.options.deleteConfirmation)
+                  self.removeWithConfirmation(prev.data('item'));
               }
             }
             break;
@@ -316,7 +326,8 @@
             if (doGetCaretPosition($input[0]) === 0) {
               var next = $inputWrapper.next();
               if (next) {
-                self.remove(next.data('item'));
+                if (self.options.deleteConfirmation)
+                  self.removeWithConfirmation(next.data('item'));
               }
             }
             break;
@@ -360,12 +371,8 @@
       self.$container.on('click', '[data-role=remove]', $.proxy(function(event) {
         var tag = $(event.target).closest('.tag').data('item');
 
-        if (self.options.deleteConfirmation) {
-          var message = (self.options.deleteConfirmationMessage || "Are you sure?").replace('{{tag}}', tag)
-
-          if (confirm(message))
-            self.remove(tag);
-        }
+        if (self.options.deleteConfirmation)
+          self.removeWithConfirmation(tag)
         else
           self.remove(tag);
 
